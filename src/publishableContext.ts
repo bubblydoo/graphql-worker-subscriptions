@@ -1,10 +1,6 @@
 import { GraphQLSchema } from "graphql";
 import { createPublishFn } from "./createPublishFn";
 
-export { handleSubscriptions } from "./handler";
-export { createWsConnectionClass } from "./wsConnection";
-export { createSubscriptionHandler as subscribe } from "./createSubscriptionHandler";
-
 /** Publish a payload to a topic. Automatically using waitUntil. */
 export type ContextPublishFn = (topic: string, payload: any) => void | Promise<void>;
 
@@ -23,13 +19,13 @@ export function createDefaultPublishableContext<Env extends {} = {}, TExecutionC
   env,
   executionCtx,
   schema,
-  wsConnection,
+  wsConnectionPool,
   subscriptionsDb,
 }: {
   env: Env;
   executionCtx: TExecutionContext
   schema: GraphQLSchema;
-  wsConnection: (env: Env) => DurableObjectNamespace;
+  wsConnectionPool: (env: Env) => DurableObjectNamespace;
   subscriptionsDb: (env: Env) => D1Database;
 }) {
   const publishableCtx: DefaultPublishableContext<Env, TExecutionContext> = {
@@ -37,7 +33,7 @@ export function createDefaultPublishableContext<Env extends {} = {}, TExecutionC
     executionCtx,
     publish: (topic, payload) => {
       const publishFn = createPublishFn(
-        wsConnection(env),
+        wsConnectionPool(env),
         subscriptionsDb(env),
         schema,
         publishableCtx
@@ -47,8 +43,6 @@ export function createDefaultPublishableContext<Env extends {} = {}, TExecutionC
 
       // this would happen inside a Durable Object
       if (!executionCtx) return promise;
-
-      console.log(executionCtx.waitUntil.toString())
       
       executionCtx?.waitUntil(promise);
     },

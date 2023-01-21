@@ -11,6 +11,10 @@ command = "npm run build"
 [[migrations]]
 new_classes = ["WsConnection"]
 tag = "v1"
+[[migrations]]
+deleted_classes = ["WsConnection"]
+new_classes = ["WsConnectionPool"]
+tag = "v2"
 
 [[d1_databases]]
 binding = "SUBSCRIPTIONS_DEV" # i.e. available in your Worker on env.DB
@@ -23,5 +27,5 @@ preview_database_id = "cbcfa2b3-6731-44d1-8dee-74a9a964787d"
 durable_objects_persist = true
 
 [durable_objects]
-bindings = [{name = "WS_CONNECTION", class_name = "WsConnection"}]
+bindings = [{name = "WS_CONNECTION_POOL", class_name = "WsConnectionPool"}]
 #wrangler d1 migrations create <SUBSCRIPTIONS_DEV> "CREATE_SUBSCRIPTION_TABLE"

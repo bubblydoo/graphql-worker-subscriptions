@@ -46,7 +46,7 @@ export type CreateContextFn<Env extends {} = {}, TExecutionContext = ExecutionCo
   request: Request,
   env: Env,
   executionContext: TExecutionContext
-) => MaybePromise<any>;
+) => MaybePromise<Record<string, any>>;
 
 export interface SubscribeOptions<
   // TSubscribeArgs extends SubscribeArgs = SubscribeArgs

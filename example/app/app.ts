@@ -2,14 +2,14 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 import { createYoga } from "graphql-yoga";
 import {
   handleSubscriptions,
-  createWsConnectionClass,
+  createWsConnectionPoolClass,
   subscribe,
   DefaultPublishableContext,
   createDefaultPublishableContext,
-} from "graphql-workers-subscriptions";
+} from "../..";
 
 export interface ENV {
-  WS_CONNECTION: DurableObjectNamespace;
+  WS_CONNECTION_POOL: DurableObjectNamespace;
   SUBSCRIPTIONS_DEV: D1Database;
 }
 
@@ -56,7 +56,7 @@ export const schema = makeExecutableSchema<DefaultPublishableContext<ENV>>({
 
 const settings = {
   schema,
-  wsConnection: (env: ENV) => env.WS_CONNECTION,
+  wsConnectionPool: (env: ENV) => env.WS_CONNECTION_POOL,
   subscriptionsDb: (env: ENV) => env.SUBSCRIPTIONS_DEV,
 };
 
@@ -101,4 +101,4 @@ const fetch = handleSubscriptions({ fetch: baseFetch, ...settings });
 
 export default { fetch };
 
-export const WsConnection = createWsConnectionClass(settings);
+export const WsConnectionPool = createWsConnectionPoolClass(settings);
